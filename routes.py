@@ -18,8 +18,10 @@ def register_routes(app):
         cursor.execute("""
             INSERT INTO users (name) VALUES(?)
 
-        """, (name))    
-
+        """, (name,))    
+        conn.commit()
+        
+        conn.close()
         return {"name": name}
     
     @app.route("/send", methods=["POST"])
@@ -29,16 +31,16 @@ def register_routes(app):
         user_id = data.get("user_id")
         text = data.get("text")
 
-        datetime = datetime.now().isoformat()
+        timestamp = datetime.now().isoformat()
 
         conn = get_connection()
         cursor = conn.cursor()
 
         cursor.execute("""
-                INSERT INTO messages (user_id, text,datetime)
+                INSERT INTO messages (user_id, text, timestamp)
                 VALUES(?,?,?)
                 
-        """, (user_id, text, datetime))
+        """, (user_id, text, timestamp))
 
         conn.commit()
         return jsonify({
@@ -51,9 +53,9 @@ def register_routes(app):
         cursor = conn.cursor()
 
         cursor.execute("""
-            SELECT messages.text, messages.datetime, messages.user_id
+            SELECT messages.text, messages.timestamp, messages.user_id
             FROM messages
-            JOIN users ON messages.user_id = user_id
+            JOIN users ON messages.user_id = users.id
             ORDER BY messages.id DESC
         
         

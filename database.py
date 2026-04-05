@@ -20,7 +20,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
             text TEXT,
-            timestamp TEXT,
+            timestamp TEXT
         )
     """)
 
