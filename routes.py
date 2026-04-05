@@ -1,10 +1,11 @@
 from flask import Flask, app, request, jsonify
 from database import get_connection 
 from datetime import datetime
+from flask import render_template
 def register_routes(app):
     @app.route('/')
-    def index():
-        return 'Hello, World!'
+    def chat_ui():
+        return render_template('chat.html')
     
     @app.route("/users", methods=["POST"])
     def create_user():
@@ -20,9 +21,10 @@ def register_routes(app):
 
         """, (name,))    
         conn.commit()
-        
+        user_id = cursor.lastrowid
         conn.close()
-        return {"name": name}
+        return {"id": user_id,
+                "name": name}
     
     @app.route("/send", methods=["POST"])
     def send_message():
@@ -70,3 +72,21 @@ def register_routes(app):
         }
         for r in rows
     ])
+    @app.route("/deletemsg", methods=["DELETE"])
+    def dlt_msg():
+        data = request.get_json()
+        msg_id = int(data.get("msg_id"))
+        
+        if not msg_id:
+            return jsonify({
+                "error": "Message ID is required"
+            })
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("DELETE FROM messages WHERE id = ?", (msg_id,))
+        row = cursor.fetchone()
+
+        conn.commit()
+        conn.close()
+        return {"text": "message deleted successfully"}
