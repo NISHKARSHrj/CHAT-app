@@ -53,7 +53,7 @@ def register_routes(app):
         cursor = conn.cursor()
 
         cursor.execute("""
-            SELECT messages.text, messages.timestamp, messages.user_id
+            SELECT messages.text, messages.timestamp, users.name
             FROM messages
             JOIN users ON messages.user_id = users.id
             ORDER BY messages.id DESC
@@ -61,7 +61,7 @@ def register_routes(app):
         
         """)
         rows = cursor.fetchall()
-
+        conn.close()
         return jsonify([
         {
             "user": r[2],
