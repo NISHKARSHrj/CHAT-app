@@ -1,7 +1,6 @@
-from flask import Flask, app, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from database import get_connection 
 from datetime import datetime
-from flask import render_template
 def register_routes(app):
     @app.route('/')
     def chat_ui():
@@ -11,7 +10,8 @@ def register_routes(app):
     def create_user():
         data = request.get_json()
         name = data.get("name")
-
+        if not name:
+            return jsonify({"error": "Name is required"}), 400
         conn = get_connection()
         # ... (rest of the implementation)  
         cursor = conn.cursor()
@@ -55,23 +55,22 @@ def register_routes(app):
         cursor = conn.cursor()
 
         cursor.execute("""
-            SELECT messages.text, messages.timestamp, users.name
+            SELECT messages.text, messages.timestamp, users.name, messages.user_id
             FROM messages
             JOIN users ON messages.user_id = users.id
             ORDER BY messages.id DESC
-        
-        
         """)
         rows = cursor.fetchall()
         conn.close()
         return jsonify([
-        {
-            "user": r[2],
-            "text": r[0],
-            "timestamp": r[1]
-        }
-        for r in rows
-    ])
+            {
+                "user": r[2],
+                "text": r[0],
+                "timestamp": r[1],
+                "user_id": r[3]
+            }
+            for r in rows
+        ])
     @app.route("/deletemsg", methods=["DELETE"])
     def dlt_msg():
         data = request.get_json()

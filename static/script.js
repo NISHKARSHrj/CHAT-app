@@ -1,25 +1,28 @@
-const API = "";
+// const API = "";
 let currentUserId = null;
 currentUserId = data.id;
 // LOAD MESSAGES
 async function loadMessages() {
-let res = await fetch("/messages");
-let data = await res.json();
+    let res = await fetch("/messages");
+    let data = await res.json();
 
+    let box = document.getElementById("messages");
+    box.innerHTML = "";
 
-let box = document.getElementById("messages");
-box.innerHTML = "";
+    data.forEach(msg => {
+        let div = document.createElement("div");
 
-data.forEach(msg => {
-    let div = document.createElement("div");
-    div.className = "message";
+        // 👇 decide side
+        if (msg.user_id == currentUserId) {
+            div.className = "message me";
+        } else {
+            div.className = "message other";
+        }
 
-    div.innerHTML = `<b>${msg.user}:</b> ${msg.text}`;
+        div.innerHTML = `<b>${msg.user}</b><br>${msg.text}`;
 
-    box.appendChild(div);
-});
-
-
+        box.appendChild(div);
+    });
 }
 
 // SEND MESSAGE
