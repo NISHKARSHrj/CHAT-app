@@ -59,6 +59,7 @@ text-align: right;
 
 .other {
 background: #64748b;
+align-self: flex-start;
 color: white;
 margin-right: auto;
 text-align: left;
