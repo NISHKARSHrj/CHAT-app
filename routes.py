@@ -74,18 +74,28 @@ def register_routes(app):
     @app.route("/deletemsg", methods=["DELETE"])
     def dlt_msg():
         data = request.get_json()
-        msg_id = int(data.get("msg_id"))
-        
+
+        msg_id = data.get("msg_id")
+
         if not msg_id:
             return jsonify({
                 "error": "Message ID is required"
-            })
+            }), 400
+
         conn = get_connection()
         cursor = conn.cursor()
 
         cursor.execute("DELETE FROM messages WHERE id = ?", (msg_id,))
-        row = cursor.fetchone()
+        
+        if cursor.rowcount == 0:
+            conn.close()
+            return jsonify({
+                "error": "Message not found"
+            }), 404
 
         conn.commit()
         conn.close()
-        return {"text": "message deleted successfully"}
+
+    return jsonify({
+        "message": "Message deleted successfully"
+    })

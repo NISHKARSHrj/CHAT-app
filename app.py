@@ -5,7 +5,7 @@ from database import init_db
 app = Flask(__name__)
 
 init_db()
-
-register_routes(app)
+with app.app_context():
+    register_routes(app)
 if __name__ == "__main__":
     app.run(debug=True)
