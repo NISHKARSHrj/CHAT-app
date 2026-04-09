@@ -25,7 +25,14 @@ def register_routes(app):
         conn.close()
         return {"id": user_id,
                 "name": name}
-    
+    @app.route("/users", methods=["GET"])
+    def get_users():
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, name FROM users")
+        rows = cursor.fetchall()
+        conn.close()
+        return jsonify([{"id": r[0], "name": r[1]} for r in rows])
     @app.route("/send", methods=["POST"])
     def send_message():
         data = request.get_json()
