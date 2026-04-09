@@ -1,86 +1,70 @@
-// const API = "";
 let currentUserId = null;
-currentUserId = data.id;
-// LOAD MESSAGES
-async function loadMessages() {
-    let res = await fetch("/messages");
-    let data = await res.json();
-
-    let box = document.getElementById("messages");
-    box.innerHTML = "";
-
-    data.forEach(msg => {
-        let div = document.createElement("div");
-
-        // 👇 decide side
-        if (msg.user_id == currentUserId) {
-            div.className = "message me";
-        } else {
-            div.className = "message other";
-        }
-
-        div.innerHTML = `<b>${msg.user}</b><br>${msg.text}`;
-
-        box.appendChild(div);
-    });
-}
-
-// SEND MESSAGE
-async function sendMessage() {
-let input = document.getElementById("messageInput");
-let text = input.value;
-
-
-await fetch("/send", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-        user_id: 1,
-        text: text
-    })
-});
-
-input.value = "";
-loadMessages();
-
-
-}
+let currentUserName = null;
 
 async function createUser() {
-    let name = document.getElementById("username").value;
+    let name = document.getElementById("username").value.trim();
+    if (!name) return alert("Please enter your name!");
 
     let res = await fetch("/users", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({name: name})
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name })
     });
 
     let data = await res.json();
+    currentUserId = data.id;
+    currentUserName = data.name;
 
-    // ⚠️ TEMP FIX: assume last user id
-    currentUserId = 1; // we’ll fix this next
+    document.getElementById("username").value = "";
+    document.getElementById("username").placeholder = "Joined as " + name;
+    document.querySelector(".user-setup button").textContent = "Joined!";
+    document.querySelector(".user-setup button").disabled = true;
+}
 
-    alert("User set: " + name);
+async function loadMessages() {
+    let res = await fetch("/messages");
+    let data = await res.json();
+    let box = document.getElementById("messages");
+
+    if (data.length === 0) {
+        box.innerHTML = '<p class="no-messages">No messages yet. Say hello!</p>';
+        return;
+    }
+
+    box.innerHTML = "";
+    data.reverse().forEach(msg => {
+        let div = document.createElement("div");
+        div.className = "bubble " + (msg.user_id == currentUserId ? "me" : "other");
+
+        let time = new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+        div.innerHTML = `
+            <div class="sender">${msg.user}</div>
+            <div>${msg.text}</div>
+            <div class="time">${time}</div>
+        `;
+        box.appendChild(div);
+    });
+
+    box.scrollTop = box.scrollHeight;
 }
 
 async function sendMessage() {
+    if (!currentUserId) return alert("Please join first!");
+
     let input = document.getElementById("messageInput");
-    let text = input.value;
+    let text = input.value.trim();
+    if (!text) return;
 
     await fetch("/send", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            user_id: currentUserId,
-            text: text
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: currentUserId, text: text })
     });
 
     input.value = "";
     loadMessages();
 }
-// AUTO REFRESH
-setInterval(loadMessages, 2000);
 
-// INITIAL LOAD
+setInterval(loadMessages, 2000);
 loadMessages();
