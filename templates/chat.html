@@ -11,11 +11,25 @@
         <div class="header">
             <span class="header-title">Chat</span>
             <div class="user-setup">
-                <input id="username" placeholder="Your name" />
-                <button onclick="createUser()">Join</button>
+                <select id="userSelect" onchange="selectExistingUser()">
+                    <option value="">Select user...</option>
+                </select>
+                <button onclick="showSignup()">+ New</button>
             </div>
         </div>
+
+        <div id="signup-bar" class="signup-bar" style="display:none;">
+            <input id="newUsername" placeholder="Enter your name" />
+            <button onclick="createUser()">Join</button>
+            <button onclick="hideSignup()">Cancel</button>
+        </div>
+
+        <div id="joined-bar" class="joined-bar" style="display:none;">
+            <span id="joined-label">Chatting as ...</span>
+        </div>
+
         <div id="messages" class="messages"></div>
+
         <div class="input-area">
             <input id="messageInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendMessage()" />
             <button onclick="sendMessage()">Send</button>
