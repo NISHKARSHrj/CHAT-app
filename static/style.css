@@ -58,7 +58,61 @@ body {
     font-weight: 600;
     cursor: pointer;
 }
+.signup-bar {
+    display: flex;
+    gap: 6px;
+    padding: 10px 16px;
+    background: #eff6ff;
+    border-bottom: 1px solid #bfdbfe;
+}
 
+.signup-bar input {
+    flex: 1;
+    padding: 7px 12px;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+}
+
+.signup-bar button {
+    padding: 7px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.signup-bar button:first-of-type {
+    background: #2563eb;
+    color: white;
+}
+
+.signup-bar button:last-of-type {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.joined-bar {
+    padding: 8px 16px;
+    background: #f0fdf4;
+    border-bottom: 1px solid #bbf7d0;
+    font-size: 13px;
+    color: #166534;
+    font-weight: 500;
+}
+
+.user-setup select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: none;
+    font-size: 13px;
+    outline: none;
+    background: white;
+    color: #1a1a1a;
+    max-width: 150px;
+}
 .messages {
     flex: 1;
     overflow-y: auto;
