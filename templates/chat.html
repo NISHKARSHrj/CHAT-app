@@ -4,21 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style.css">
-    <title>CHAT UI</title>
+    <title>Chat</title>
 </head>
 <body>
-    <div>
-        <input id="username" placeholder="Enter your name">
-        <button onclick="createUser()">Set User</button>
+    <div class="app">
+        <div class="header">
+            <span class="header-title">Chat</span>
+            <div class="user-setup">
+                <input id="username" placeholder="Your name" />
+                <button onclick="createUser()">Join</button>
+            </div>
+        </div>
+        <div id="messages" class="messages"></div>
+        <div class="input-area">
+            <input id="messageInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendMessage()" />
+            <button onclick="sendMessage()">Send</button>
+        </div>
     </div>
-    <div id="messages"></div> 
-    <div class="input-box"> 
-        <input id="messageInput" placeholder="Type message...">
-        <button onclick="sendMessage()">
-            Send
-        </button> 
-    </div>
-
     <script src="/static/script.js"></script>
 </body>
 </html>
