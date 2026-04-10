@@ -1,7 +1,7 @@
 from flask import Flask
 from routes import register_routes
 from database import init_db
-
+import os
 app = Flask(__name__)
 
 init_db()
