@@ -25,6 +25,8 @@ def register_routes(app):
         conn.close()
         return {"id": user_id,
                 "name": name}
+    
+
     @app.route("/users", methods=["GET"])
     def get_users():
         conn = get_connection()
@@ -32,7 +34,13 @@ def register_routes(app):
         cursor.execute("SELECT id, name FROM users")
         rows = cursor.fetchall()
         conn.close()
-        return jsonify([{"id": r[0], "name": r[1]} for r in rows])
+        return jsonify([{"id": r[0], 
+                        "name": r[1]
+                        }
+                        for r in rows
+                        ])
+    
+
     @app.route("/send", methods=["POST"])
     def send_message():
         data = request.get_json()
@@ -107,3 +115,30 @@ def register_routes(app):
         return jsonify({
             "message": "Message deleted successfully"
         })
+    
+    @app.route("/deleteuser", methods=["DELETE"])
+    def delete_user():
+        """Delete a user and all their messages"""
+        data = request.get_json()
+        user_id = data.get("user_id")
+        
+        if not user_id:
+            return jsonify({"error": "User ID is required"}), 400
+        
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # First, delete all messages from this user
+        cursor.execute("DELETE FROM messages WHERE user_id = ?", (user_id,))
+        
+        # Then delete the user
+        cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+        
+        if cursor.rowcount == 0:
+            conn.close()
+            return jsonify({"error": "User not found"}), 404
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({"message": "User and all messages deleted successfully"})
