@@ -137,6 +137,126 @@ async function sendMessage() {
     loadMessages();
 }
 
+
+async function deleteUser() {
+    if (!currentUserId) return;
+    
+    
+    const confirmed = confirm(
+        `WARNING: This will delete user "${currentUserName}" and ALL their messages!\n\n` +
+        `This action cannot be undone. Are you absolutely sure?`
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+        let res = await fetch("/deleteuser", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: currentUserId })
+        });
+        
+        if (res.ok) {
+            alert("User and all messages deleted successfully!");
+            
+        
+            currentUserId = null;
+            currentUserName = null;
+            
+            
+            document.getElementById("joined-bar").style.display = "none";
+            document.getElementById("deleteUserBtn").style.display = "none";
+            
+            
+            await loadUsers();
+            
+            
+            document.getElementById("messages").innerHTML = '<p class="no-messages">User deleted. Select or create a new user to chat.</p>';
+        } else {
+            let error = await res.json();
+            alert("Error: " + (error.error || "Could not delete user"));
+        }
+    } catch (error) {
+        console.error("Delete user error:", error);
+        alert("Network error. Please try again.");
+    }
+}
+
+function showJoinedBar(name) {
+    document.getElementById("joined-bar").style.display = "block";
+    document.getElementById("joined-label").textContent = "Chatting as " + name;
+    document.getElementById("deleteUserBtn").style.display = "inline-block";  // Show delete button
+    hideSignup();
+}
+
+function selectExistingUser() {
+    let select = document.getElementById("userSelect");
+    let selectedId = select.value;
+    let selectedName = select.options[select.selectedIndex].text;
+    if (!selectedId) return;
+    currentUserId = selectedId;
+    currentUserName = selectedName;
+    showJoinedBar(selectedName);
+    loadMessages();  
+}
+
+async function deleteMessage(msgId) {
+    // Create custom styled confirmation
+    const confirmed = confirm("Delete this message?");
+    if (!confirmed) return;
+    
+    try {
+        let res = await fetch("/deletemsg", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ msg_id: msgId })
+        });
+        
+        if (res.ok) {
+            loadMessages();
+
+            showTempNotification("Message deleted");
+        } else {
+            let error = await res.json();
+            alert("Could not delete message: " + (error.error || "Unknown error"));
+        }
+    } catch (error) {
+        console.error("Delete message error:", error);
+        alert("Network error. Please try again.");
+    }
+}
+
+
+function showTempNotification(message) {
+    let notif = document.createElement("div");
+    notif.textContent = message;
+    notif.style.cssText = `
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #333;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 12px;
+        z-index: 1000;
+        animation: fadeOut 2s ease-out;
+    `;
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 2000);
+}
+
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeOut {
+        0% { opacity: 1; }
+        70% { opacity: 1; }
+        100% { opacity: 0; visibility: hidden; }
+    }
+`;
+document.head.appendChild(style);
+
 setInterval(loadMessages, 2000);
 loadUsers();
 loadMessages();
