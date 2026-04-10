@@ -18,9 +18,7 @@ function selectExistingUser() {
     let select = document.getElementById("userSelect");
     let selectedId = select.value;
     let selectedName = select.options[select.selectedIndex].text;
-
     if (!selectedId) return;
-
     currentUserId = selectedId;
     currentUserName = selectedName;
     showJoinedBar(selectedName);
@@ -60,6 +58,22 @@ async function createUser() {
     showJoinedBar(data.name);
 }
 
+async function deleteMessage(msgId) {
+    if (!confirm("Delete this message?")) return;
+
+    let res = await fetch("/deletemsg", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ msg_id: msgId })
+    });
+
+    if (res.ok) {
+        loadMessages();
+    } else {
+        alert("Could not delete message!");
+    }
+}
+
 async function loadMessages() {
     let res = await fetch("/messages");
     let data = await res.json();
@@ -72,6 +86,9 @@ async function loadMessages() {
 
     box.innerHTML = "";
     data.reverse().forEach(msg => {
+        let wrap = document.createElement("div");
+        wrap.className = "bubble-wrap " + (msg.user_id == currentUserId ? "me" : "other");
+
         let div = document.createElement("div");
         div.className = "bubble " + (msg.user_id == currentUserId ? "me" : "other");
 
@@ -82,7 +99,22 @@ async function loadMessages() {
             <div>${msg.text}</div>
             <div class="time">${time}</div>
         `;
-        box.appendChild(div);
+
+        // show delete button only for your own messages
+        let deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.innerHTML = "&#x2715;";
+        deleteBtn.title = "Delete message";
+
+        if (msg.user_id == currentUserId) {
+            deleteBtn.onclick = () => deleteMessage(msg.id);
+            wrap.appendChild(div);
+            wrap.appendChild(deleteBtn);
+        } else {
+            wrap.appendChild(div);
+        }
+
+        box.appendChild(wrap);
     });
 
     box.scrollTop = box.scrollHeight;
