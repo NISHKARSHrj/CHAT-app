@@ -1,9 +1,9 @@
-FLASK LITE-CHAT APP
+💬 FLASK LITE-CHAT APP
 
 A clean, responsive, real-time chat application built with a Python (Flask) backend and a vanilla JavaScript frontend.
 
 
-FEATURES---
+🚀 FEATURES---
 
 1. User Management: Create new users or select existing ones from a persistent SQLite database.
 
@@ -16,7 +16,7 @@ FEATURES---
 5. Responsive UI: A modern, mobile-friendly interface inspired by popular messaging apps, featuring distinct "bubbles" for self and others
 
 
-TECH STACK---
+🛠️ TECH STACK---
 
 BACKEND: Python 3, Flask
 
@@ -27,7 +27,7 @@ FRONTEND: HTML5, CSS3, Vanilla javascript
 ROUTING: FLASK-CORS for for cross-origin resourse sharing
 
 
-Project Structure---
+📂 Project Structure---
 
 app.py: The entry point that initializes the Flask server and database.
 
@@ -40,7 +40,7 @@ script.js: Frontend logic for fetching data, DOM manipulation, and interval poll
 style.css: Modern styling including animations for notifications and chat bubble layouts.
 
 
-Installation & setup---
+🔧 Installation & setup---
 
 1. Clone the repository:
 
@@ -59,7 +59,7 @@ python app.py
 open your browser and navigate to http://localhost:5000
 
 
-API Endpoints---
+📡 API Endpoints---
 
 GET /users: Fetch all registered users.
 
@@ -74,7 +74,7 @@ DELETE /deletemsg: Delete a specific message by ID
 DELETE /deleteuser: Remove a user and all their associated messages.
 
 
-LICENSE---
+📝 LICENSE---
 
 This project is open-source and available for educational use.
 
